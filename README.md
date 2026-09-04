@@ -4,7 +4,18 @@ A small Chrome extension that downloads a Taste.io user’s complete movie and T
 
 The extension uses Taste’s own paginated ratings endpoint from the ratings page you already have open. It processes everything locally in the browser: there is no server, account, analytics, or credential collection.
 
-## Install for development
+## Install a release ZIP
+
+Chrome loads an extracted extension folder rather than the ZIP file itself.
+
+1. Download the release ZIP and extract it.
+2. Open `chrome://extensions` in Chrome.
+3. Turn on **Developer mode**.
+4. Click **Load unpacked**.
+5. Choose the extracted folder containing `manifest.json`.
+6. Open a page such as `https://www.taste.io/users/USERNAME/ratings` and select **Export ratings**.
+
+## Install from source
 
 1. Open `chrome://extensions` in Chrome.
 2. Turn on **Developer mode**.
@@ -30,7 +41,7 @@ Chrome does not automatically refresh unpacked extensions. After changing the so
 | `rated_at` | Blank. Taste’s endpoint does not expose a rating timestamp. |
 | `exported_at` | UTC time when the CSV was produced. |
 
-The extension always requests the unfiltered ratings list, even if the open page is filtered to movies, TV, or one rating tier. Rows are deduplicated and the final count is checked against Taste’s page data when that count is available. If the list changes during a long export and the counts do not agree, no incomplete file is downloaded.
+The extension always requests the unfiltered ratings list, even if the open page is filtered to movies, TV, or one rating tier. Rows are deduplicated and the final count is checked against Taste’s page data when that count is available. If the list changes during a long export and the counts do not agree, no incomplete file is downloaded. If Taste does not identify a row as the profile owner’s rating, the export stops instead of substituting the signed-in viewer’s rating.
 
 ## Development
 
@@ -38,9 +49,10 @@ No build step or package install is required.
 
 ```sh
 npm test
+npm run package
 ```
 
-The extension is Manifest V3 and uses no third-party dependencies.
+`npm run package` writes a deterministic, versioned archive to `dist/`. The manifest and extension files are at the archive root, ready to extract and load. The extension is Manifest V3 and uses no third-party dependencies.
 
 ## Known limitation
 

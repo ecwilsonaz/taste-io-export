@@ -1,9 +1,10 @@
 {
   "name": "taste-io-export",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "private": true,
   "description": "A privacy-friendly Chrome extension that exports Taste.io ratings to CSV.",
   "scripts": {
+    "package": "node scripts/package.mjs",
     "test": "node --test"
   },
   "license": "MIT"

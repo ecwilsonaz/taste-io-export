@@ -16,7 +16,9 @@ chrome.tabs.query({ active: true, currentWindow: true }, ([tab]) => {
 
   exportButton.disabled = false;
   openTaste.hidden = true;
-  message.textContent = "Ready to export every movie and TV rating, newest first.";
+  const username = decodeURIComponent(new URL(tab.url).pathname.split("/")[2]);
+  message.textContent = `Ready to export @${username}, newest first.`;
+  exportButton.focus();
 
   exportButton.addEventListener("click", async () => {
     exportButton.disabled = true;

@@ -8,32 +8,35 @@
 
   const username = decodeURIComponent(pathMatch[1]);
   const core = globalThis.TasteExportCore;
+  const runner = globalThis.TasteExportRunner;
+  const ui = globalThis.TasteExportUi;
   const PAGE_SIZE = 24;
-  const MAX_PAGES = 10_000;
   let activeController = null;
+  let panelState = "idle";
+  let currentExpectedTotal = null;
 
   const root = document.createElement("div");
   root.id = "taste-export-root";
   root.innerHTML = `
     <button class="taste-export-launcher" type="button">Export ratings</button>
-    <section class="taste-export-panel" aria-label="Taste.io ratings exporter" hidden>
+    <section class="taste-export-panel" aria-labelledby="taste-export-title" hidden>
       <div class="taste-export-header">
         <div>
           <p class="taste-export-eyebrow">Taste.io exporter</p>
-          <h2 class="taste-export-title">Download every rating</h2>
+          <h2 class="taste-export-title" id="taste-export-title">Export ratings</h2>
         </div>
         <button class="taste-export-close" type="button" aria-label="Close exporter">×</button>
       </div>
-      <p class="taste-export-copy">Exports movies and TV shows for @${escapeHtml(username)}, newest first.</p>
-      <div class="taste-export-progress" role="progressbar" aria-label="Export progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" hidden>
+      <p class="taste-export-copy">@${escapeHtml(username)} · Movies and TV · newest first</p>
+      <div class="taste-export-progress" role="progressbar" aria-label="Export progress" aria-valuemin="0" aria-valuemax="100" hidden>
         <div class="taste-export-progress-bar"></div>
       </div>
-      <p class="taste-export-status" aria-live="polite">Ready to export.</p>
+      <p class="taste-export-status" aria-live="polite" hidden></p>
       <div class="taste-export-actions">
         <button class="taste-export-primary" type="button">Export all ratings</button>
         <button class="taste-export-secondary" type="button" hidden>Cancel</button>
       </div>
-      <p class="taste-export-note">Nothing is uploaded. Taste provides rating order, but not rating dates, so <code>rated_at</code> is blank.</p>
+      <p class="taste-export-note">Private — processed in this browser. Rating dates aren’t available.</p>
     </section>
   `;
   document.body.append(root);
@@ -51,6 +54,9 @@
   closeButton.addEventListener("click", closePanel);
   exportButton.addEventListener("click", startExport);
   cancelButton.addEventListener("click", () => activeController?.abort());
+  root.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !panel.hidden && !activeController) closePanel();
+  });
 
   chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
     if (message?.type !== "TASTE_EXPORT_START") return false;
@@ -60,6 +66,9 @@
     return false;
   });
 
+  currentExpectedTotal = expectedRatingCount();
+  setPrimaryState("idle", currentExpectedTotal);
+
   function escapeHtml(value) {
     const span = document.createElement("span");
     span.textContent = value;
@@ -67,35 +76,57 @@
   }
 
   function openPanel() {
+    currentExpectedTotal = expectedRatingCount();
+    if (panelState === "idle") setPrimaryState("idle", currentExpectedTotal);
     launcher.hidden = true;
     panel.hidden = false;
+    exportButton.focus();
   }
 
   function closePanel() {
     if (activeController) return;
     panel.hidden = true;
     launcher.hidden = false;
+    launcher.focus();
   }
 
   function setStatus(message, kind = "neutral") {
     status.textContent = message;
     status.dataset.kind = kind;
+    status.hidden = !message;
+  }
+
+  function setPrimaryState(state, expectedTotal) {
+    panelState = state;
+    exportButton.dataset.state = state;
+    exportButton.textContent = ui.primaryActionLabel(state, expectedTotal);
+  }
+
+  function hideProgress() {
+    progress.hidden = true;
+    progress.removeAttribute("aria-valuenow");
+    delete progress.dataset.mode;
+    progressBar.style.removeProperty("width");
   }
 
   function setProgress(count, expectedTotal) {
+    const model = ui.progressModel(count, expectedTotal);
     progress.hidden = false;
-    const percentage = expectedTotal
-      ? Math.min(100, Math.round((count / expectedTotal) * 100))
-      : Math.min(95, 12 + (count % (PAGE_SIZE * 7)) / (PAGE_SIZE * 7) * 83);
-    progressBar.style.width = `${percentage}%`;
-    progress.setAttribute("aria-valuenow", String(Math.round(percentage)));
+    progress.dataset.mode = model.mode;
+    if (model.mode === "determinate") {
+      progressBar.style.width = `${model.percentage}%`;
+      progress.setAttribute("aria-valuenow", model.ariaValue);
+    } else {
+      progressBar.style.removeProperty("width");
+      progress.removeAttribute("aria-valuenow");
+    }
   }
 
   function setRunning(running) {
     exportButton.disabled = running;
-    exportButton.textContent = running ? "Exporting…" : "Export all ratings";
     cancelButton.hidden = !running;
     closeButton.disabled = running;
+    if (running) cancelButton.focus();
   }
 
   function expectedRatingCount() {
@@ -112,85 +143,9 @@
     }
   }
 
-  async function sleep(milliseconds, signal) {
-    await new Promise((resolve, reject) => {
-      if (signal.aborted) {
-        reject(new DOMException("Export cancelled", "AbortError"));
-        return;
-      }
-      const onAbort = () => {
-        clearTimeout(timeout);
-        reject(new DOMException("Export cancelled", "AbortError"));
-      };
-      const timeout = setTimeout(() => {
-        signal.removeEventListener("abort", onAbort);
-        resolve();
-      }, milliseconds);
-      signal.addEventListener("abort", onAbort, { once: true });
-    });
-  }
-
-  async function fetchJsonWithRetry(url, signal) {
-    const retryDelays = [0, 800, 1_600, 3_200];
-    let lastError;
-
-    for (const delay of retryDelays) {
-      if (delay) await sleep(delay, signal);
-      try {
-        const response = await fetch(url, {
-          credentials: "include",
-          headers: { Accept: "application/json" },
-          signal,
-        });
-        if (response.ok) return await response.json();
-        if (response.status === 401 || response.status === 403) {
-          throw new Error("Taste rejected the request. Sign in again, reload this page, and retry.");
-        }
-        if (response.status !== 429 && response.status < 500) {
-          throw new Error(`Taste returned HTTP ${response.status}.`);
-        }
-        lastError = new Error(`Taste is temporarily unavailable (HTTP ${response.status}).`);
-      } catch (error) {
-        if (error.name === "AbortError") throw error;
-        if (/Sign in again|HTTP 4\d\d/.test(error.message)) throw error;
-        lastError = error;
-      }
-    }
-
-    throw lastError || new Error("Could not reach Taste.io.");
-  }
-
-  async function collectRatings(signal, expectedTotal) {
-    const unique = new Map();
-    let offset = 0;
-
-    for (let page = 0; page < MAX_PAGES; page += 1) {
-      const query = new URLSearchParams({
-        limit: String(PAGE_SIZE),
-        offset: String(offset),
-      });
-      const endpoint = `/api/users/${encodeURIComponent(username)}/ratings?${query}`;
-      const payload = await fetchJsonWithRetry(endpoint, signal);
-      const items = core.extractItems(payload);
-
-      for (const item of items) {
-        const key = core.dedupeKey(item);
-        if (!unique.has(key)) unique.set(key, item);
-      }
-
-      setProgress(unique.size, expectedTotal);
-      setStatus(
-        expectedTotal
-          ? `Collected ${unique.size.toLocaleString()} of ${expectedTotal.toLocaleString()} ratings…`
-          : `Collected ${unique.size.toLocaleString()} ratings…`,
-      );
-
-      if (items.length < PAGE_SIZE) return [...unique.values()];
-      offset += items.length;
-      await sleep(125, signal);
-    }
-
-    throw new Error("Stopped after an unexpectedly large number of pages.");
+  function ratingsEndpoint(offset, limit) {
+    const query = new URLSearchParams({ limit: String(limit), offset: String(offset) });
+    return `/api/users/${encodeURIComponent(username)}/ratings?${query}`;
   }
 
   function downloadCsv(items) {
@@ -211,23 +166,40 @@
   async function startExport() {
     if (activeController) return;
     activeController = new AbortController();
-    const expectedTotal = expectedRatingCount();
+    currentExpectedTotal = expectedRatingCount();
+    setPrimaryState("running", currentExpectedTotal);
     setRunning(true);
-    setProgress(0, expectedTotal);
+    setProgress(0, currentExpectedTotal);
     setStatus("Connecting to Taste.io…");
 
     try {
-      const items = await collectRatings(activeController.signal, expectedTotal);
-      if (expectedTotal !== null && items.length !== expectedTotal) {
-        throw new Error(
-          `Taste reports ${expectedTotal.toLocaleString()} ratings, but the export found ${items.length.toLocaleString()}. ` +
-          "No file was downloaded; avoid rating anything during export and retry.",
-        );
-      }
+      const items = await runner.collectAllRatings({
+        expectedTotal: currentExpectedTotal,
+        pageSize: PAGE_SIZE,
+        signal: activeController.signal,
+        fetchPage: ({ offset, limit, signal }) => runner.fetchJsonWithRetry(
+          ratingsEndpoint(offset, limit),
+          { signal },
+        ),
+        extractItems: core.extractItems,
+        dedupeKey: core.dedupeKey,
+        onProgress: ({ count, expectedTotal }) => {
+          setProgress(count, expectedTotal);
+          setStatus(
+            expectedTotal === null
+              ? `Collected ${count.toLocaleString()} ratings…`
+              : `Collected ${count.toLocaleString()} of ${expectedTotal.toLocaleString()} ratings…`,
+          );
+        },
+      });
+
       downloadCsv(items);
-      setProgress(items.length, items.length || 1);
-      setStatus(`Downloaded ${items.length.toLocaleString()} ratings.`, "success");
+      hideProgress();
+      setPrimaryState("complete", items.length);
+      setStatus(`✓ ${items.length.toLocaleString()} ratings downloaded.`, "success");
     } catch (error) {
+      hideProgress();
+      setPrimaryState("idle", expectedRatingCount());
       if (error.name === "AbortError") {
         setStatus("Export cancelled.");
       } else {
@@ -237,6 +209,7 @@
     } finally {
       activeController = null;
       setRunning(false);
+      exportButton.focus();
     }
   }
 })();

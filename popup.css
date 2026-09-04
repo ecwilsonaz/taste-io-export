@@ -15,8 +15,8 @@ main {
 }
 
 .eyebrow {
-  margin: 0 0 8px;
-  color: #b9ef83;
+  margin: 0 0 6px;
+  color: #a9dc78;
   font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.08em;
@@ -25,13 +25,13 @@ main {
 
 h1 {
   margin: 0;
-  font-size: 21px;
-  line-height: 1.2;
+  font-size: 20px;
+  line-height: 1.25;
 }
 
 p {
   color: #c8c4be;
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.5;
 }
 
@@ -42,17 +42,22 @@ a {
   width: 100%;
   border-radius: 9px;
   font: inherit;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 750;
   text-align: center;
 }
 
 button {
-  border: 0;
+  border: 1px solid transparent;
   padding: 11px 14px;
   background: #b9ef83;
   color: #142008;
   cursor: pointer;
+  transition: background 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+
+button:hover:not(:disabled) {
+  background: #c5f69a;
 }
 
 button:disabled {
@@ -66,6 +71,12 @@ a {
   padding: 10px 14px;
   color: #f7f5f2;
   text-decoration: none;
+  transition: background 140ms ease, border-color 140ms ease;
+}
+
+a:hover {
+  border-color: #5b5860;
+  background: #29282b;
 }
 
 button:focus-visible,
@@ -76,6 +87,15 @@ a:focus-visible {
 
 .privacy {
   margin: 14px 0 0;
-  color: #8e8a86;
-  font-size: 11px;
+  border-top: 1px solid #302f32;
+  padding-top: 13px;
+  color: #aaa6a1;
+  font-size: 12px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  button,
+  a {
+    transition-duration: 0.01ms;
+  }
 }

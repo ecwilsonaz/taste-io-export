@@ -11,32 +11,53 @@
   color: #f7f5f2;
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-size: 14px;
-  line-height: 1.4;
+  line-height: 1.45;
 }
 
 .taste-export-launcher {
-  border: 0;
+  border: 1px solid rgb(20 32 8 / 12%);
   border-radius: 999px;
-  padding: 11px 16px;
+  padding: 11px 17px;
   background: #b9ef83;
-  box-shadow: 0 10px 35px rgb(0 0 0 / 35%);
+  box-shadow: 0 8px 28px rgb(0 0 0 / 28%);
   color: #142008;
   cursor: pointer;
   font: inherit;
   font-weight: 800;
+  transition: background 140ms ease, box-shadow 140ms ease, transform 140ms ease;
+}
+
+.taste-export-launcher:hover {
+  background: #c5f69a;
+  box-shadow: 0 10px 32px rgb(0 0 0 / 34%);
+  transform: translateY(-1px);
+}
+
+.taste-export-launcher:active {
+  transform: translateY(0);
 }
 
 .taste-export-panel {
-  width: min(360px, calc(100vw - 32px));
-  border: 1px solid #454248;
+  width: min(340px, calc(100vw - 32px));
+  border: 1px solid #3f3d43;
   border-radius: 14px;
-  padding: 18px;
-  background: #171719;
-  box-shadow: 0 18px 60px rgb(0 0 0 / 50%);
+  padding: 20px;
+  background: rgb(23 23 25 / 98%);
+  box-shadow: 0 16px 44px rgb(0 0 0 / 42%);
+}
+
+@supports (backdrop-filter: blur(10px)) {
+  .taste-export-panel {
+    background: rgb(23 23 25 / 94%);
+    backdrop-filter: blur(10px);
+  }
 }
 
 .taste-export-panel[hidden],
-.taste-export-launcher[hidden] {
+.taste-export-launcher[hidden],
+.taste-export-progress[hidden],
+.taste-export-status[hidden],
+.taste-export-secondary[hidden] {
   display: none;
 }
 
@@ -44,98 +65,58 @@
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 12px;
+  gap: 16px;
 }
 
 .taste-export-eyebrow {
-  margin: 0 0 4px;
-  color: #b9ef83;
+  margin: 0 0 5px;
+  color: #a9dc78;
   font-size: 11px;
   font-weight: 800;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.075em;
   text-transform: uppercase;
 }
 
 .taste-export-title {
   margin: 0;
   color: #f7f5f2;
-  font-size: 18px;
+  font-size: 20px;
+  font-weight: 750;
   line-height: 1.25;
 }
 
 .taste-export-close {
-  width: 30px;
-  height: 30px;
+  width: 32px;
+  height: 32px;
   flex: 0 0 auto;
-  border: 0;
+  border: 1px solid #3f3d43;
   border-radius: 50%;
-  background: #29282b;
-  color: #c8c4be;
-  cursor: pointer;
-  font: inherit;
-  font-size: 18px;
-  line-height: 1;
-}
-
-.taste-export-copy,
-.taste-export-status,
-.taste-export-note {
-  margin: 11px 0 0;
-}
-
-.taste-export-copy,
-.taste-export-status {
-  color: #c8c4be;
-  font-size: 13px;
-}
-
-.taste-export-status[data-kind="error"] {
-  color: #ffaaa2;
-}
-
-.taste-export-status[data-kind="success"] {
-  color: #b9ef83;
-}
-
-.taste-export-actions {
-  display: flex;
-  gap: 8px;
-  margin-top: 15px;
-}
-
-.taste-export-primary,
-.taste-export-secondary {
-  flex: 1;
-  border-radius: 9px;
-  padding: 10px 12px;
-  cursor: pointer;
-  font: inherit;
-  font-size: 13px;
-  font-weight: 800;
-}
-
-.taste-export-primary {
-  border: 0;
-  background: #b9ef83;
-  color: #142008;
-}
-
-.taste-export-secondary {
-  border: 1px solid #545158;
   background: transparent;
+  color: #c8c4be;
+  cursor: pointer;
+  font: inherit;
+  font-size: 19px;
+  line-height: 1;
+  transition: background 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+
+.taste-export-close:hover:not(:disabled) {
+  border-color: #56535a;
+  background: #29282b;
   color: #f7f5f2;
 }
 
-.taste-export-primary:disabled,
-.taste-export-secondary:disabled {
-  cursor: not-allowed;
-  opacity: 0.45;
+.taste-export-copy {
+  margin: 8px 0 0;
+  color: #bbb7b2;
+  font-size: 14px;
 }
 
 .taste-export-progress {
+  position: relative;
   overflow: hidden;
-  height: 6px;
-  margin-top: 14px;
+  height: 5px;
+  margin-top: 18px;
   border-radius: 99px;
   background: #302f32;
 }
@@ -148,9 +129,103 @@
   transition: width 180ms ease-out;
 }
 
+.taste-export-progress[data-mode="indeterminate"] .taste-export-progress-bar {
+  width: 38%;
+  animation: taste-export-indeterminate 1.15s ease-in-out infinite;
+}
+
+@keyframes taste-export-indeterminate {
+  from { transform: translateX(-120%); }
+  to { transform: translateX(360%); }
+}
+
+.taste-export-status {
+  margin: 16px 0 0;
+  border: 1px solid #3b393e;
+  border-radius: 9px;
+  padding: 9px 11px;
+  background: #222124;
+  color: #d2ceca;
+  font-size: 13px;
+}
+
+.taste-export-status[data-kind="error"] {
+  border-color: rgb(255 170 162 / 35%);
+  background: rgb(255 170 162 / 8%);
+  color: #ffb6af;
+}
+
+.taste-export-status[data-kind="success"] {
+  border-color: rgb(185 239 131 / 32%);
+  background: rgb(185 239 131 / 8%);
+  color: #c5f69a;
+}
+
+.taste-export-actions {
+  display: flex;
+  gap: 9px;
+  margin-top: 18px;
+}
+
+.taste-export-primary,
+.taste-export-secondary {
+  min-height: 42px;
+  flex: 1;
+  border-radius: 10px;
+  padding: 10px 13px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  transition: background 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+
+.taste-export-primary {
+  border: 1px solid transparent;
+  background: #b9ef83;
+  color: #142008;
+}
+
+.taste-export-primary:hover:not(:disabled) {
+  background: #c5f69a;
+}
+
+.taste-export-primary[data-state="complete"] {
+  border-color: #56535a;
+  background: transparent;
+  color: #f7f5f2;
+}
+
+.taste-export-primary[data-state="complete"]:hover:not(:disabled) {
+  border-color: #6b6870;
+  background: #29282b;
+}
+
+.taste-export-secondary {
+  border: 1px solid #56535a;
+  background: transparent;
+  color: #f7f5f2;
+}
+
+.taste-export-secondary:hover:not(:disabled) {
+  border-color: #6b6870;
+  background: #29282b;
+}
+
+.taste-export-primary:disabled,
+.taste-export-secondary:disabled,
+.taste-export-close:disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
+}
+
 .taste-export-note {
-  color: #8e8a86;
-  font-size: 11px;
+  margin: 16px 0 0;
+  border-top: 1px solid #302f32;
+  padding-top: 14px;
+  color: #aaa6a1;
+  font-size: 12px;
+  line-height: 1.5;
 }
 
 #taste-export-root button:focus-visible {
@@ -160,12 +235,27 @@
 
 @media (max-width: 520px) {
   #taste-export-root {
-    right: 16px;
-    bottom: 16px;
-    left: 16px;
+    right: 12px;
+    bottom: max(12px, env(safe-area-inset-bottom));
+    left: 12px;
+  }
+
+  .taste-export-panel {
+    width: 100%;
   }
 
   .taste-export-launcher {
     float: right;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #taste-export-root *,
+  #taste-export-root *::before,
+  #taste-export-root *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
   }
 }

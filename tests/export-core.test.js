@@ -109,6 +109,10 @@ test("unknown categories, ratings, and identities fail closed", () => {
     () => normalizeRating({ category: "movies", slug: "dateless", name: "Dateless", highlightRating: 3 }, 1, "now"),
     /invalid release year/i,
   );
+  assert.throws(
+    () => normalizeRating({ category: "movies", slug: "moon", name: "Moon", year: 2009, user: { rating: 4 } }, 1, "now"),
+    /profile owner's rating/i,
+  );
 });
 
 test("IMDb evidence accepts only Taste's observed external.imdb shape", () => {
