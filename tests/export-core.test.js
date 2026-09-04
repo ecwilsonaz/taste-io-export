@@ -5,6 +5,7 @@ const {
   csvFromRatings,
   extractItems,
   filenameFor,
+  imdbEvidence,
   normalizeRating,
   ratingLabel,
 } = require("../lib/export-core.js");
@@ -27,7 +28,10 @@ test("normalizeRating keeps the user's rating and stable Taste order", () => {
       year: 2009,
       runtime: 97,
       genre: ["Science Fiction", "Drama"],
-      user: { rating: 3 },
+      directors: [{ name: "Duncan Jones" }],
+      cast: ["Sam Rockwell", { name: "Kevin Spacey" }],
+      externalRating: { average: 7.8, total: "381,245" },
+      user: { rating: 1 },
       highlightRating: 3,
     },
     7,
@@ -39,12 +43,16 @@ test("normalizeRating keeps the user's rating and stable Taste order", () => {
     title: "Moon",
     year: 2009,
     type: "Movie",
-    rating: 3,
-    rating_label: "Good",
+    taste_rating: 3,
+    taste_rating_label: "Good",
     taste_slug: "moon-2009-BJpegguQ2QM",
     taste_url: "https://www.taste.io/movies/moon-2009-BJpegguQ2QM",
     runtime_minutes: 97,
     genres: "Science Fiction; Drama",
+    directors: "Duncan Jones",
+    cast: "Sam Rockwell; Kevin Spacey",
+    imdb_rating: 7.8,
+    imdb_rating_count: 381245,
     rated_at: "",
     exported_at: "2026-09-04T20:00:00.000Z",
   });
@@ -58,17 +66,17 @@ test("normalizeRating tolerates alternate fields and TV categories", () => {
       title: "Severance",
       releaseYear: "2022",
       genres: "Drama",
-      rating: 4,
+      highlightRating: 4,
     },
     1,
     "now",
   );
 
   assert.equal(row.title, "Severance");
-  assert.equal(row.year, "2022");
+  assert.equal(row.year, 2022);
   assert.equal(row.type, "TV Show");
-  assert.equal(row.rating, 4);
-  assert.equal(row.rating_label, "Amazing");
+  assert.equal(row.taste_rating, 4);
+  assert.equal(row.taste_rating_label, "Amazing");
   assert.equal(row.taste_url, "https://www.taste.io/tv/severance");
 });
 
@@ -80,6 +88,50 @@ test("rating labels match Taste's numeric scale", () => {
   assert.equal(ratingLabel(9), "Unknown");
 });
 
+test("unknown categories, ratings, and identities fail closed", () => {
+  assert.throws(
+    () => normalizeRating({ category: "podcast", slug: "serial", highlightRating: 4 }, 1, "now"),
+    /unknown media category/i,
+  );
+  assert.throws(
+    () => normalizeRating({ category: "movies", slug: "moon", name: "Moon", year: 2009, highlightRating: 8 }, 1, "now"),
+    /invalid rating/i,
+  );
+  assert.throws(
+    () => normalizeRating({ category: "movies", highlightRating: 3 }, 1, "now"),
+    /stable slug/i,
+  );
+  assert.throws(
+    () => normalizeRating({ category: "movies", slug: "untitled", year: 2020, highlightRating: 3 }, 1, "now"),
+    /without a title/i,
+  );
+  assert.throws(
+    () => normalizeRating({ category: "movies", slug: "dateless", name: "Dateless", highlightRating: 3 }, 1, "now"),
+    /invalid release year/i,
+  );
+});
+
+test("IMDb evidence accepts only Taste's observed externalRating shape", () => {
+  assert.deepEqual(
+    imdbEvidence({ externalRating: { average: "8.1", total: "1,200,000" } }),
+    { rating: 8.1, count: 1_200_000 },
+  );
+  assert.deepEqual(
+    imdbEvidence({ externalRating: { average: 11, total: 12_345 } }),
+    { rating: "", count: 12_345 },
+  );
+  assert.deepEqual(
+    imdbEvidence({ externalRating: { average: 6.9, total: -1 } }),
+    { rating: 6.9, count: "" },
+  );
+  assert.deepEqual(imdbEvidence({ imdbRating: 7.4, imdbRatingCount: 12_345 }), { rating: "", count: "" });
+  assert.deepEqual(
+    imdbEvidence({ externalRating: { average: "8.1", total: "1.2m" } }),
+    { rating: 8.1, count: "" },
+  );
+  assert.deepEqual(imdbEvidence({ highlightRating: 4 }), { rating: "", count: "" });
+});
+
 test("CSV quotes commas and formula-like cells and includes a UTF-8 BOM", () => {
   const csv = csvFromRatings([
     {
@@ -87,18 +139,26 @@ test("CSV quotes commas and formula-like cells and includes a UTF-8 BOM", () => 
       title: '=HYPERLINK("bad")',
       year: 2020,
       type: "Movie",
-      rating: 2,
-      rating_label: "Meh",
+      taste_rating: 2,
+      taste_rating_label: "Meh",
       taste_slug: "odd",
       taste_url: "https://www.taste.io/movies/odd",
       runtime_minutes: "",
       genres: "Comedy, Drama",
+      directors: "",
+      cast: "",
+      imdb_rating: "",
+      imdb_rating_count: "",
       rated_at: "",
       exported_at: "now",
     },
   ]);
 
   assert.ok(csv.startsWith("\uFEFFtaste_order,title,year"));
+  assert.equal(
+    csv.slice(1).split("\r\n")[0],
+    "taste_order,title,year,type,taste_rating,taste_rating_label,taste_slug,taste_url,runtime_minutes,genres,directors,cast,imdb_rating,imdb_rating_count,rated_at,exported_at",
+  );
   assert.match(csv, /"'=HYPERLINK\(""bad""\)"/);
   assert.match(csv, /"Comedy, Drama"/);
 });

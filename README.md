@@ -21,10 +21,12 @@ Chrome does not automatically refresh unpacked extensions. After changing the so
 | --- | --- |
 | `taste_order` | Newest-first position returned by Taste at export time. |
 | `title`, `year`, `type` | The rated movie or TV show. |
-| `rating` | Taste’s numeric value: 1–4. |
-| `rating_label` | `Awful`, `Meh`, `Good`, or `Amazing`. |
+| `taste_rating` | The profile owner’s Taste value: 1–4. |
+| `taste_rating_label` | `Awful`, `Meh`, `Good`, or `Amazing`. |
 | `taste_slug`, `taste_url` | Stable Taste identifiers/links where available. |
-| `runtime_minutes`, `genres` | Extra metadata returned with the rating. |
+| `runtime_minutes`, `genres` | Content metadata returned with the rating. |
+| `directors`, `cast` | Stable identity evidence for later catalog matching. |
+| `imdb_rating`, `imdb_rating_count` | IMDb aggregate values exposed by Taste. These are matching evidence, not an IMDb identifier. |
 | `rated_at` | Blank. Taste’s endpoint does not expose a rating timestamp. |
 | `exported_at` | UTC time when the CSV was produced. |
 
@@ -43,6 +45,8 @@ The extension is Manifest V3 and uses no third-party dependencies.
 ## Known limitation
 
 Taste returns ratings in newest-first order but does not include the calendar date when a rating was made. `taste_order` preserves that chronology; it is not a date and may change if older ratings are edited or re-rated.
+
+Taste does not expose an IMDb `tt…` identifier in the ratings payload. The IMDb score and vote count can help corroborate a later title/year match, but both values change over time and must not be treated as identity.
 
 ## License
 
