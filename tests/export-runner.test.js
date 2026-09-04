@@ -66,6 +66,7 @@ test("retryAfterMilliseconds accepts standard values and rejects unsafe timer de
   assert.equal(retryAfterMilliseconds("Fri, 04 Sep 2026 21:00:30 GMT", now), 30_000);
   assert.equal(retryAfterMilliseconds("-1", now), null);
   assert.equal(retryAfterMilliseconds("999999999999", now), null);
+  assert.equal(retryAfterMilliseconds("Fri, 31 Feb 2026 21:00:30 GMT", now), null);
   assert.equal(retryAfterMilliseconds("sometime later", now), null);
 });
 
