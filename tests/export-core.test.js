@@ -30,7 +30,7 @@ test("normalizeRating keeps the user's rating and stable Taste order", () => {
       genre: ["Science Fiction", "Drama"],
       directors: [{ name: "Duncan Jones" }],
       cast: ["Sam Rockwell", { name: "Kevin Spacey" }],
-      externalRating: { average: 7.8, total: "381,245" },
+      external: { imdb: { ratingAverage: 7.8, ratingTotal: "381,245" } },
       user: { rating: 1 },
       highlightRating: 3,
     },
@@ -111,22 +111,22 @@ test("unknown categories, ratings, and identities fail closed", () => {
   );
 });
 
-test("IMDb evidence accepts only Taste's observed externalRating shape", () => {
+test("IMDb evidence accepts only Taste's observed external.imdb shape", () => {
   assert.deepEqual(
-    imdbEvidence({ externalRating: { average: "8.1", total: "1,200,000" } }),
+    imdbEvidence({ external: { imdb: { ratingAverage: "8.1", ratingTotal: "1,200,000" } } }),
     { rating: 8.1, count: 1_200_000 },
   );
   assert.deepEqual(
-    imdbEvidence({ externalRating: { average: 11, total: 12_345 } }),
+    imdbEvidence({ external: { imdb: { ratingAverage: 11, ratingTotal: 12_345 } } }),
     { rating: "", count: 12_345 },
   );
   assert.deepEqual(
-    imdbEvidence({ externalRating: { average: 6.9, total: -1 } }),
+    imdbEvidence({ external: { imdb: { ratingAverage: 6.9, ratingTotal: -1 } } }),
     { rating: 6.9, count: "" },
   );
   assert.deepEqual(imdbEvidence({ imdbRating: 7.4, imdbRatingCount: 12_345 }), { rating: "", count: "" });
   assert.deepEqual(
-    imdbEvidence({ externalRating: { average: "8.1", total: "1.2m" } }),
+    imdbEvidence({ external: { imdb: { ratingAverage: "8.1", ratingTotal: "1.2m" } } }),
     { rating: 8.1, count: "" },
   );
   assert.deepEqual(imdbEvidence({ highlightRating: 4 }), { rating: "", count: "" });
