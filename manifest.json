@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "Taste.io Ratings Exporter",
+  "description": "Export every Taste.io movie and TV rating to a CSV file.",
+  "version": "0.1.0",
+  "permissions": ["activeTab"],
+  "action": {
+    "default_title": "Export Taste.io ratings",
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.taste.io/users/*/ratings*"],
+      "js": ["lib/export-core.js", "content.js"],
+      "css": ["content.css"],
+      "run_at": "document_idle"
+    }
+  ]
+}

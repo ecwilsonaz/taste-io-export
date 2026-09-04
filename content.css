@@ -1,0 +1,171 @@
+#taste-export-root,
+#taste-export-root * {
+  box-sizing: border-box;
+}
+
+#taste-export-root {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 2147483647;
+  color: #f7f5f2;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.taste-export-launcher {
+  border: 0;
+  border-radius: 999px;
+  padding: 11px 16px;
+  background: #b9ef83;
+  box-shadow: 0 10px 35px rgb(0 0 0 / 35%);
+  color: #142008;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 800;
+}
+
+.taste-export-panel {
+  width: min(360px, calc(100vw - 32px));
+  border: 1px solid #454248;
+  border-radius: 14px;
+  padding: 18px;
+  background: #171719;
+  box-shadow: 0 18px 60px rgb(0 0 0 / 50%);
+}
+
+.taste-export-panel[hidden],
+.taste-export-launcher[hidden] {
+  display: none;
+}
+
+.taste-export-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.taste-export-eyebrow {
+  margin: 0 0 4px;
+  color: #b9ef83;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.taste-export-title {
+  margin: 0;
+  color: #f7f5f2;
+  font-size: 18px;
+  line-height: 1.25;
+}
+
+.taste-export-close {
+  width: 30px;
+  height: 30px;
+  flex: 0 0 auto;
+  border: 0;
+  border-radius: 50%;
+  background: #29282b;
+  color: #c8c4be;
+  cursor: pointer;
+  font: inherit;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.taste-export-copy,
+.taste-export-status,
+.taste-export-note {
+  margin: 11px 0 0;
+}
+
+.taste-export-copy,
+.taste-export-status {
+  color: #c8c4be;
+  font-size: 13px;
+}
+
+.taste-export-status[data-kind="error"] {
+  color: #ffaaa2;
+}
+
+.taste-export-status[data-kind="success"] {
+  color: #b9ef83;
+}
+
+.taste-export-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 15px;
+}
+
+.taste-export-primary,
+.taste-export-secondary {
+  flex: 1;
+  border-radius: 9px;
+  padding: 10px 12px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.taste-export-primary {
+  border: 0;
+  background: #b9ef83;
+  color: #142008;
+}
+
+.taste-export-secondary {
+  border: 1px solid #545158;
+  background: transparent;
+  color: #f7f5f2;
+}
+
+.taste-export-primary:disabled,
+.taste-export-secondary:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.taste-export-progress {
+  overflow: hidden;
+  height: 6px;
+  margin-top: 14px;
+  border-radius: 99px;
+  background: #302f32;
+}
+
+.taste-export-progress-bar {
+  width: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: #b9ef83;
+  transition: width 180ms ease-out;
+}
+
+.taste-export-note {
+  color: #8e8a86;
+  font-size: 11px;
+}
+
+#taste-export-root button:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+@media (max-width: 520px) {
+  #taste-export-root {
+    right: 16px;
+    bottom: 16px;
+    left: 16px;
+  }
+
+  .taste-export-launcher {
+    float: right;
+  }
+}
