@@ -35,6 +35,12 @@ p {
   line-height: 1.5;
 }
 
+#message[data-ready="true"] {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 button,
 a {
   box-sizing: border-box;
@@ -58,6 +64,11 @@ button {
 
 button:hover:not(:disabled) {
   background: #c5f69a;
+}
+
+button:active:not(:disabled),
+a:active {
+  transform: translateY(1px);
 }
 
 button:disabled {

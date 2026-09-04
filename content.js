@@ -31,7 +31,7 @@
       <div class="taste-export-progress" role="progressbar" aria-label="Export progress" aria-valuemin="0" aria-valuemax="100" hidden>
         <div class="taste-export-progress-bar"></div>
       </div>
-      <p class="taste-export-status" aria-live="polite" hidden></p>
+      <p class="taste-export-status" role="status" aria-live="polite"></p>
       <div class="taste-export-actions">
         <button class="taste-export-primary" type="button">Export all ratings</button>
         <button class="taste-export-secondary" type="button" hidden>Cancel</button>
@@ -93,7 +93,6 @@
   function setStatus(message, kind = "neutral") {
     status.textContent = message;
     status.dataset.kind = kind;
-    status.hidden = !message;
   }
 
   function setPrimaryState(state, expectedTotal) {

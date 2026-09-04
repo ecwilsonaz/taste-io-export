@@ -1,7 +1,11 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
 
-const { collectAllRatings, fetchJsonWithRetry } = require("../lib/export-runner.js");
+const {
+  collectAllRatings,
+  fetchJsonWithRetry,
+  retryAfterMilliseconds,
+} = require("../lib/export-runner.js");
 
 function response(status, body, retryAfter = null) {
   return {
@@ -30,6 +34,18 @@ test("fetchJsonWithRetry honors Retry-After before retrying a throttled request"
   assert.deepEqual(sleeps, [30_000]);
 });
 
+test("fetchJsonWithRetry honors Retry-After on a temporarily unavailable response", async () => {
+  const replies = [response(503, null, "30"), response(200, { ok: true })];
+  const sleeps = [];
+
+  await fetchJsonWithRetry("/ratings", {
+    fetchImpl: async () => replies.shift(),
+    sleep: async (milliseconds) => sleeps.push(milliseconds),
+  });
+
+  assert.deepEqual(sleeps, [30_000]);
+});
+
 test("fetchJsonWithRetry jitters exponential backoff when no server deadline exists", async () => {
   const replies = [response(503), response(200, { ok: true })];
   const sleeps = [];
@@ -42,6 +58,15 @@ test("fetchJsonWithRetry jitters exponential backoff when no server deadline exi
 
   assert.deepEqual(result, { ok: true });
   assert.deepEqual(sleeps, [640]);
+});
+
+test("retryAfterMilliseconds accepts standard values and rejects unsafe timer delays", () => {
+  const now = Date.parse("Fri, 04 Sep 2026 21:00:00 GMT");
+  assert.equal(retryAfterMilliseconds("30", now), 30_000);
+  assert.equal(retryAfterMilliseconds("Fri, 04 Sep 2026 21:00:30 GMT", now), 30_000);
+  assert.equal(retryAfterMilliseconds("-1", now), null);
+  assert.equal(retryAfterMilliseconds("999999999999", now), null);
+  assert.equal(retryAfterMilliseconds("sometime later", now), null);
 });
 
 test("collectAllRatings continues after a short page until the endpoint returns empty", async () => {
@@ -84,6 +109,30 @@ test("collectAllRatings rejects a partial export when Taste's count does not mat
     }),
     /reports 3 ratings, but the export found 2/i,
   );
+});
+
+test("collectAllRatings does not trust a stale-low page count as an early stopping point", async () => {
+  const offsets = [];
+  const pages = new Map([
+    [0, [{ slug: "a" }, { slug: "b" }]],
+    [2, [{ slug: "c" }]],
+  ]);
+
+  await assert.rejects(
+    collectAllRatings({
+      expectedTotal: 2,
+      pageSize: 2,
+      interPageDelayMs: 0,
+      fetchPage: async ({ offset }) => {
+        offsets.push(offset);
+        return pages.get(offset);
+      },
+      extractItems: (payload) => payload,
+      dedupeKey: (item) => item.slug,
+    }),
+    /reports 2 ratings, but the export found 3/i,
+  );
+  assert.deepEqual(offsets, [0, 2]);
 });
 
 test("collectAllRatings deduplicates rows and rejects a repeated non-advancing page", async () => {

@@ -17,6 +17,7 @@ chrome.tabs.query({ active: true, currentWindow: true }, ([tab]) => {
   exportButton.disabled = false;
   openTaste.hidden = true;
   const username = decodeURIComponent(new URL(tab.url).pathname.split("/")[2]);
+  message.dataset.ready = "true";
   message.textContent = `Ready to export @${username}, newest first.`;
   exportButton.focus();
 

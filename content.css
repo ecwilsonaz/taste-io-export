@@ -56,7 +56,6 @@
 .taste-export-panel[hidden],
 .taste-export-launcher[hidden],
 .taste-export-progress[hidden],
-.taste-export-status[hidden],
 .taste-export-secondary[hidden] {
   display: none;
 }
@@ -108,8 +107,11 @@
 
 .taste-export-copy {
   margin: 8px 0 0;
+  overflow: hidden;
   color: #bbb7b2;
   font-size: 14px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .taste-export-progress {
@@ -147,6 +149,19 @@
   background: #222124;
   color: #d2ceca;
   font-size: 13px;
+}
+
+.taste-export-status:empty {
+  position: absolute;
+  overflow: hidden;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  border: 0;
+  padding: 0;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 .taste-export-status[data-kind="error"] {
@@ -188,6 +203,12 @@
 
 .taste-export-primary:hover:not(:disabled) {
   background: #c5f69a;
+}
+
+.taste-export-primary:active:not(:disabled),
+.taste-export-secondary:active:not(:disabled),
+.taste-export-close:active:not(:disabled) {
+  transform: translateY(1px);
 }
 
 .taste-export-primary[data-state="complete"] {
