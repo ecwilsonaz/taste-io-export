@@ -14,6 +14,10 @@ test("manifest loads runtime dependencies in order and shares the package versio
   const manifest = require("../manifest.json");
   const packageJson = require("../package.json");
   assert.equal(manifest.version, packageJson.version);
+  assert.equal("permissions" in manifest, false);
+  assert.deepEqual(manifest.content_scripts[0].matches, [
+    "https://www.taste.io/users/*/ratings*",
+  ]);
   assert.deepEqual(manifest.content_scripts[0].js, [
     "lib/export-core.js",
     "lib/export-runner.js",

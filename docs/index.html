@@ -337,16 +337,14 @@
             <li>
               <strong>Access to Taste.io rating pages:</strong> the content script is limited
               to URLs matching <code>https://www.taste.io/users/*/ratings*</code> so the
-              exporter can appear and run on those pages.
-            </li>
-            <li>
-              <strong>Active tab:</strong> used when you invoke the extension from Chrome's
-              toolbar, allowing it to communicate with the Taste.io ratings tab you selected.
+              exporter can appear, retrieve the selected profile's paginated ratings, and
+              create the requested CSV.
             </li>
           </ul>
           <p>
-            The extension does not request access to your browsing history, arbitrary
-            websites, clipboard, location, contacts, microphone, or camera.
+            The extension requests no named Chrome API permissions. It does not request access
+            to arbitrary websites, your general browsing history, clipboard, location,
+            contacts, microphone, or camera.
           </p>
         </section>
 
