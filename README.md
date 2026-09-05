@@ -56,6 +56,15 @@ npm run package
 
 `npm run package` writes a deterministic, versioned archive to `dist/`. The manifest and extension files are at the archive root, ready to extract and load. The extension is Manifest V3 and uses no third-party dependencies.
 
+## Chrome Web Store assets
+
+Upload-ready listing artwork lives in [`store-assets/`](store-assets/):
+
+- `store-icon-128.png` — required 128×128 store icon
+- `screenshot-01-1280x800.jpg` — required listing screenshot
+
+The editable SVG and HTML sources are kept in [`store-assets/source/`](store-assets/source/). The matching runtime icons in [`icons/`](icons/) are included in release archives through the manifest and packaging script.
+
 ## Known limitation
 
 Taste returns ratings in newest-first order but does not include the calendar date when a rating was made. `taste_order` preserves that chronology; it is not a date and may change if older ratings are edited or re-rated.
