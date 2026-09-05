@@ -26,6 +26,10 @@ During an export, the extension sends requests only to `www.taste.io` to retriev
 
 The extension does not sell, rent, share, or use personal information for advertising, credit decisions, or purposes unrelated to the user-requested export.
 
+## Limited Use compliance
+
+The extension's use of information received from users complies with the [Chrome Web Store User Data Policy](https://developer.chrome.com/docs/webstore/program-policies/user-data-faq), including its Limited Use requirements. Profile and rating information is used only to provide the extension's single-purpose export feature. It is not transferred to third parties, used for unrelated purposes, used to determine creditworthiness or for lending, or made available for a person to read.
+
 ## Storage and retention
 
 The extension does not maintain a database or developer-operated server. Rating data is kept in memory only while an export is running. The resulting CSV is saved through Chrome's normal download process and remains on your device until you move or delete it. The extension does not retain a copy.
