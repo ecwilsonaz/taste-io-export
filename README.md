@@ -62,6 +62,8 @@ Upload-ready listing artwork lives in [`store-assets/`](store-assets/):
 
 - `store-icon-128.png` — required 128×128 store icon
 - `screenshot-01-1280x800.jpg` — required listing screenshot
+- `small-promo-tile-440x280.jpg` — optional small promotional tile
+- `marquee-promo-tile-1400x560.jpg` — optional marquee promotional tile
 
 The editable SVG and HTML sources are kept in [`store-assets/source/`](store-assets/source/). The matching runtime icons in [`icons/`](icons/) are included in release archives through the manifest and packaging script.
 
