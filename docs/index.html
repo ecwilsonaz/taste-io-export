@@ -1,0 +1,426 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="dark">
+    <meta name="theme-color" content="#151515">
+    <meta
+      name="description"
+      content="Privacy policy for the Taste.io Ratings Exporter Chrome extension."
+    >
+    <title>Privacy Policy · Taste.io Ratings Exporter</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #0d0e0d;
+        --surface: #171817;
+        --surface-raised: #1d1f1d;
+        --border: #353835;
+        --text: #f3f4f1;
+        --muted: #b5b9b2;
+        --quiet: #8d928a;
+        --accent: #aff276;
+        --accent-ink: #132009;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        min-width: 320px;
+        margin: 0;
+        color: var(--text);
+        background:
+          radial-gradient(circle at 12% 0%, rgb(175 242 118 / 9%), transparent 32rem),
+          var(--bg);
+        font-size: 16px;
+        line-height: 1.7;
+      }
+
+      a {
+        color: var(--accent);
+        text-underline-offset: 0.18em;
+      }
+
+      a:hover {
+        text-decoration-thickness: 2px;
+      }
+
+      a:focus-visible {
+        border-radius: 3px;
+        outline: 2px solid var(--accent);
+        outline-offset: 4px;
+      }
+
+      .shell {
+        width: min(100% - 2rem, 920px);
+        margin-inline: auto;
+      }
+
+      header {
+        padding: 3rem 0 2.4rem;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .brand {
+        display: inline-flex;
+        gap: 0.65rem;
+        align-items: center;
+        color: var(--text);
+        font-size: 0.82rem;
+        font-weight: 800;
+        letter-spacing: 0.12em;
+        text-decoration: none;
+        text-transform: uppercase;
+      }
+
+      .brand-mark {
+        width: 0.8rem;
+        height: 0.8rem;
+        border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 0 0 5px rgb(175 242 118 / 12%);
+      }
+
+      h1,
+      h2 {
+        line-height: 1.15;
+        letter-spacing: -0.025em;
+      }
+
+      h1 {
+        max-width: 720px;
+        margin: 2.2rem 0 1rem;
+        font-size: clamp(2.5rem, 8vw, 5.25rem);
+      }
+
+      .lede {
+        max-width: 680px;
+        margin: 0;
+        color: var(--muted);
+        font-size: clamp(1.08rem, 2.5vw, 1.3rem);
+      }
+
+      .effective {
+        display: inline-block;
+        margin-top: 1.35rem;
+        padding: 0.3rem 0.7rem;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        color: var(--quiet);
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      main {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 13rem;
+        gap: 4rem;
+        align-items: start;
+        padding: 3.25rem 0 5rem;
+      }
+
+      article {
+        min-width: 0;
+      }
+
+      .summary {
+        margin: 0 0 3rem;
+        padding: 1.35rem 1.5rem;
+        border: 1px solid rgb(175 242 118 / 35%);
+        border-radius: 1rem;
+        color: #dfffc4;
+        background: rgb(175 242 118 / 7%);
+        font-size: 1.05rem;
+      }
+
+      section + section {
+        margin-top: 3rem;
+        padding-top: 3rem;
+        border-top: 1px solid var(--border);
+      }
+
+      h2 {
+        margin: 0 0 1rem;
+        font-size: clamp(1.45rem, 4vw, 1.9rem);
+      }
+
+      p,
+      ul {
+        margin: 0 0 1rem;
+        color: var(--muted);
+      }
+
+      ul {
+        padding-left: 1.35rem;
+      }
+
+      li + li {
+        margin-top: 0.6rem;
+      }
+
+      strong {
+        color: var(--text);
+      }
+
+      nav {
+        position: sticky;
+        top: 2rem;
+        padding: 1rem;
+        border: 1px solid var(--border);
+        border-radius: 0.9rem;
+        background: var(--surface);
+      }
+
+      nav p {
+        margin: 0 0 0.7rem;
+        color: var(--quiet);
+        font-size: 0.72rem;
+        font-weight: 800;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
+      nav a {
+        display: block;
+        padding: 0.3rem 0;
+        color: var(--muted);
+        font-size: 0.88rem;
+        text-decoration: none;
+      }
+
+      nav a:hover {
+        color: var(--accent);
+      }
+
+      footer {
+        padding: 1.5rem 0 3rem;
+        border-top: 1px solid var(--border);
+        color: var(--quiet);
+        font-size: 0.88rem;
+      }
+
+      footer .shell {
+        display: flex;
+        gap: 1rem;
+        justify-content: space-between;
+        flex-wrap: wrap;
+      }
+
+      footer p {
+        margin: 0;
+        color: inherit;
+      }
+
+      @media (max-width: 720px) {
+        header {
+          padding-top: 2rem;
+        }
+
+        main {
+          display: block;
+          padding-top: 2rem;
+        }
+
+        nav {
+          display: none;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="shell">
+        <a class="brand" href="https://github.com/ecwilsonaz/taste-io-export">
+          <span class="brand-mark" aria-hidden="true"></span>
+          Taste.io Ratings Exporter
+        </a>
+        <h1>Privacy policy</h1>
+        <p class="lede">
+          Your ratings stay between Taste.io and your browser. The extension has no
+          server, account system, analytics, advertising, or tracking.
+        </p>
+        <span class="effective">Effective September 4, 2026</span>
+      </div>
+    </header>
+
+    <main class="shell">
+      <article>
+        <p class="summary">
+          <strong>In short:</strong> the extension reads ratings from the Taste.io profile
+          you choose, builds a CSV locally, and downloads that file to your computer. The
+          developer does not receive your ratings or credentials.
+        </p>
+
+        <section id="scope">
+          <h2>Scope</h2>
+          <p>
+            This policy applies to the Taste.io Ratings Exporter Chrome extension and its
+            privacy-policy website. The extension is an independent open-source project and
+            is not affiliated with, endorsed by, or operated by Taste.io.
+          </p>
+        </section>
+
+        <section id="data-accessed">
+          <h2>Information the extension accesses</h2>
+          <p>Only when you start an export, the extension accesses:</p>
+          <ul>
+            <li>
+              <strong>Taste.io profile and rating information</strong> returned for the
+              selected profile, including titles, ratings, rating order, and available title
+              metadata.
+            </li>
+            <li>
+              <strong>The profile URL and username</strong> needed to identify the list being
+              exported and name the downloaded file.
+            </li>
+            <li>
+              <strong>Your existing Taste.io browser session</strong> so Taste.io can answer
+              requests in the same way it does for the page you opened. The extension does
+              not read, copy, or store your password or authentication cookies.
+            </li>
+          </ul>
+        </section>
+
+        <section id="use">
+          <h2>How information is used</h2>
+          <p>
+            The accessed information is used only to assemble the CSV you requested, check
+            that the export is complete, display export progress, and download the finished
+            file to your device. Processing happens locally in your browser.
+          </p>
+        </section>
+
+        <section id="transmission">
+          <h2>Network requests and disclosure</h2>
+          <p>
+            During an export, the extension sends requests only to <strong>www.taste.io</strong>
+            to retrieve the selected profile's rating pages. It does not send ratings,
+            browsing activity, credentials, or other personal information to the developer
+            or to any analytics, advertising, data-broker, or other third-party service.
+          </p>
+          <p>
+            The extension does not sell, rent, share, or use personal information for
+            advertising, credit decisions, or purposes unrelated to the user-requested export.
+          </p>
+        </section>
+
+        <section id="storage">
+          <h2>Storage and retention</h2>
+          <p>
+            The extension does not maintain a database or developer-operated server. Rating
+            data is kept in memory only while an export is running. The resulting CSV is saved
+            through Chrome's normal download process and remains on your device until you move
+            or delete it. The extension does not retain a copy.
+          </p>
+        </section>
+
+        <section id="permissions">
+          <h2>Chrome permissions</h2>
+          <ul>
+            <li>
+              <strong>Access to Taste.io rating pages:</strong> the content script is limited
+              to URLs matching <code>https://www.taste.io/users/*/ratings*</code> so the
+              exporter can appear and run on those pages.
+            </li>
+            <li>
+              <strong>Active tab:</strong> used when you invoke the extension from Chrome's
+              toolbar, allowing it to communicate with the Taste.io ratings tab you selected.
+            </li>
+          </ul>
+          <p>
+            The extension does not request access to your browsing history, arbitrary
+            websites, clipboard, location, contacts, microphone, or camera.
+          </p>
+        </section>
+
+        <section id="website">
+          <h2>This website</h2>
+          <p>
+            This page is a static GitHub Pages site. It uses no cookies, analytics, forms,
+            third-party fonts, or embedded third-party media. GitHub may process limited
+            technical information when serving Pages; that processing is governed by
+            <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement">
+              GitHub's Privacy Statement</a>.
+          </p>
+        </section>
+
+        <section id="choices">
+          <h2>Your choices</h2>
+          <p>
+            Exporting is voluntary and begins only when you select the export command. You can
+            stop using the extension at any time by disabling or uninstalling it in Chrome.
+            You control the CSV after it is downloaded and can delete it like any other local
+            file.
+          </p>
+        </section>
+
+        <section id="children">
+          <h2>Children's privacy</h2>
+          <p>
+            The extension is not directed to children and the developer does not knowingly
+            collect personal information from children—or from anyone else—through the
+            extension.
+          </p>
+        </section>
+
+        <section id="changes">
+          <h2>Changes to this policy</h2>
+          <p>
+            If the extension's data practices change, this policy will be updated before the
+            change is released, and the effective date above will be revised. The repository's
+            version history provides a public record of policy changes.
+          </p>
+        </section>
+
+        <section id="contact">
+          <h2>Contact</h2>
+          <p>
+            Questions or privacy concerns can be submitted through the project's
+            <a href="https://github.com/ecwilsonaz/taste-io-export/issues">GitHub issue tracker</a>.
+            Please do not include passwords, cookies, exported CSV files, or other sensitive
+            information in a public issue.
+          </p>
+        </section>
+      </article>
+
+      <nav aria-label="Policy sections">
+        <p>On this page</p>
+        <a href="#scope">Scope</a>
+        <a href="#data-accessed">Information accessed</a>
+        <a href="#use">How it is used</a>
+        <a href="#transmission">Network and disclosure</a>
+        <a href="#storage">Storage and retention</a>
+        <a href="#permissions">Chrome permissions</a>
+        <a href="#website">This website</a>
+        <a href="#choices">Your choices</a>
+        <a href="#children">Children</a>
+        <a href="#changes">Changes</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </main>
+
+    <footer>
+      <div class="shell">
+        <p>© 2026 Taste.io Ratings Exporter contributors</p>
+        <a href="https://github.com/ecwilsonaz/taste-io-export">View source on GitHub</a>
+      </div>
+    </footer>
+  </body>
+</html>

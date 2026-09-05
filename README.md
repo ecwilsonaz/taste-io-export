@@ -4,6 +4,8 @@ A small Chrome extension that downloads a Taste.io user’s complete movie and T
 
 The extension uses Taste’s own paginated ratings endpoint from the ratings page you already have open. It processes everything locally in the browser: there is no server, account, analytics, or credential collection.
 
+Read the public [privacy policy](https://ecwilsonaz.github.io/taste-io-export/). Its source lives in [`PRIVACY.md`](PRIVACY.md), and the published GitHub Pages site lives in [`docs/`](docs/).
+
 ## Install a release ZIP
 
 Chrome loads an extracted extension folder rather than the ZIP file itself.
