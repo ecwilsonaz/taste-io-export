@@ -102,6 +102,14 @@ export async function buildArchive(rootDirectory) {
   return Buffer.concat([...localParts, centralDirectory, end]);
 }
 
+export async function stageRuntimeFiles(rootDirectory, destination) {
+  for (const relativePath of RUNTIME_FILES) {
+    const target = path.join(destination, relativePath);
+    await fs.mkdir(path.dirname(target), { recursive: true });
+    await fs.copyFile(path.join(rootDirectory, relativePath), target);
+  }
+}
+
 async function packageExtension() {
   const scriptPath = fileURLToPath(import.meta.url);
   const rootDirectory = path.resolve(path.dirname(scriptPath), "..");

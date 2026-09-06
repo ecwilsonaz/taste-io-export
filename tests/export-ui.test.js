@@ -23,3 +23,19 @@ test("primaryActionLabel reflects idle, running, and completed states", () => {
   assert.equal(primaryActionLabel("running", 111), "Exporting…");
   assert.equal(primaryActionLabel("complete", 111), "Export again");
 });
+
+test("popupState is ready only when the content script answers the ping", () => {
+  const { popupState } = require("../lib/export-ui.js");
+  assert.deepEqual(popupState({ ok: true, username: "ecwilson" }), {
+    ready: true,
+    message: "Ready to export @ecwilson, newest first.",
+  });
+  assert.deepEqual(popupState(undefined), {
+    ready: false,
+    message: "Open any Taste.io user’s Ratings page first.",
+  });
+  assert.deepEqual(popupState({ ok: false }), {
+    ready: false,
+    message: "Open any Taste.io user’s Ratings page first.",
+  });
+});

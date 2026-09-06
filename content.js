@@ -59,6 +59,10 @@
   });
 
   chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+    if (message?.type === "TASTE_EXPORT_PING") {
+      sendResponse({ ok: true, username });
+      return false;
+    }
     if (message?.type !== "TASTE_EXPORT_START") return false;
     openPanel();
     startExport();

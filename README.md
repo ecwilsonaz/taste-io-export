@@ -56,7 +56,7 @@ npm test
 npm run package
 ```
 
-`npm run package` writes a deterministic, versioned archive to `dist/`. The manifest and extension files are at the archive root, ready to extract and load. The extension is Manifest V3 and uses no third-party dependencies.
+`npm run package` writes a deterministic, versioned archive to `dist/`. `npm run package:crx` builds the same file set as a CRX signed with the verified-upload key (read from `~/.config/taste-io-export/verified-upload-key.pem`, or `CRX_KEY`), which the Chrome Web Store requires once verified CRX uploads are enabled. The manifest and extension files are at the archive root, ready to extract and load. The extension is Manifest V3 and uses no third-party dependencies.
 
 ## Chrome Web Store assets
 

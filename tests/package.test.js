@@ -57,3 +57,17 @@ test("release archive is deterministic and contains only the supported distribut
   assert.equal(first.readUInt32LE(first.length - 22), 0x06054b50);
   for (const file of expectedFiles) assert.ok(first.includes(Buffer.from(file)), file);
 });
+
+test("stageRuntimeFiles copies exactly the runtime files into a directory", async () => {
+  const os = require("node:os");
+  const fsp = require("node:fs/promises");
+  const { RUNTIME_FILES, stageRuntimeFiles } = await import("../scripts/package.mjs");
+  const dest = await fsp.mkdtemp(path.join(os.tmpdir(), "taste-stage-"));
+  await stageRuntimeFiles(path.resolve(__dirname, ".."), dest);
+  const staged = [];
+  for await (const entry of fsp.glob("**/*", { cwd: dest, withFileTypes: true })) {
+    if (entry.isFile()) staged.push(path.relative(dest, path.join(entry.parentPath, entry.name)));
+  }
+  assert.deepEqual(staged.sort(), [...RUNTIME_FILES].sort());
+  await fsp.rm(dest, { recursive: true });
+});
